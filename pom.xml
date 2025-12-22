@@ -177,6 +177,9 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+
+					<jvmArguments>-Dspring.profiles.active=${spring.profiles.active}</jvmArguments>
+
 				</configuration>
 			</plugin>
 		</plugins>
