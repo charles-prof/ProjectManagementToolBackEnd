@@ -140,6 +140,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -208,6 +209,22 @@ public class AuthController {
         res.setJwt(jwt);
 
         return new ResponseEntity<>(res, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<ApiResponse> forgotPassword(@RequestParam String email) {
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
+
+        String resetToken = JwtProvider.generatePasswordResetToken(email, jwtSecret);
+
+        // Logic to send email: Use Spring Boot Starter Mail
+        // String resetUrl = "yourfrontend.com" + resetToken;
+        // emailService.send(email, "Password Reset", "Click here: " + resetUrl);
+
+        return ResponseEntity.ok(new ApiResponse("Reset link sent to email", true));
     }
 
     private Authentication authenticate(String username, String password) {
