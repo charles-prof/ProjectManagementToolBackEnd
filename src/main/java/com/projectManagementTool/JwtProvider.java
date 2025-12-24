@@ -40,12 +40,23 @@ public class JwtProvider {
 	            .compact();
 	}
     
-//    public static String getEmailFromToken(String jwt) {
-//    	jwt = jwt.substring(7);
-//    	Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt).getBody();
-//        return String.valueOf(claims.get("email"));
-//       
-//    }
+    public static String generatePasswordResetToken(String email, String secret) {
+        return Jwts.builder()
+                .setSubject(email)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 15)) // 15 mins
+                .signWith(Keys.hmacShaKeyFor(secret.getBytes()), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    // public static String getEmailFromToken(String token, String secret) {
+    //     Claims claims = Jwts.parserBuilder()
+    //             .setSigningKey(Keys.hmacShaKeyFor(secret.getBytes()))
+    //             .build()
+    //             .parseClaimsJws(token)
+    //             .getBody();
+    //     return claims.getSubject();
+    // }
 	
 	public static String getEmailFromToken(String jwt, String secret) {
 	    jwt = jwt.substring(7);
