@@ -227,6 +227,24 @@ public class AuthController {
         return ResponseEntity.ok(new ApiResponse("Reset link sent to email", true));
     }
 
+    @PostMapping("/reset-password")
+    public ResponseEntity<ApiResponse> resetPassword(@RequestBody ResetPasswordRequest req) {
+        // 1. Extract email from JWT
+        String email = JwtProvider.getEmailFromToken(req.getToken(), jwtSecret);
+
+        // 2. Find user
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            throw new RuntimeException("Invalid token or user does not exist");
+        }
+
+        // 3. Update password
+        user.setPassword(passwordEncoder.encode(req.getNewPassword()));
+        userRepository.save(user);
+
+        return ResponseEntity.ok(new ApiResponse("Password updated successfully", true));
+    }
+
     private Authentication authenticate(String username, String password) {
         UserDetails userDetails = customeUserDetails.loadUserByUsername(username);
         if (userDetails == null) {
