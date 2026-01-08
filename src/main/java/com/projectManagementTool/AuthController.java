@@ -212,13 +212,13 @@ public class AuthController {
     }
 
     @PostMapping("/forgot-password")
-    public ResponseEntity<ApiResponse> forgotPassword(@RequestParam String email) {
-        User user = userRepository.findByEmail(email);
+    public ResponseEntity<ApiResponse> forgotPassword(@RequestBody ForgotPasswordRequest req) {
+        User user = userRepository.findByEmail(req.getEmail());
         if (user == null) {
             throw new RuntimeException("User not found");
         }
 
-        String resetToken = JwtProvider.generatePasswordResetToken(email, jwtSecret);
+        String resetToken = JwtProvider.generatePasswordResetToken(user.getEmail(), jwtSecret);
 
         // Logic to send email: Use Spring Boot Starter Mail
         // String resetUrl = "yourfrontend.com" + resetToken;
